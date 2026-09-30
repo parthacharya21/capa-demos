@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: cosmic-moo-loop-
+spec:
+  entrypoint: moo-madness
+  templates:
+  - name: moo-madness
+    steps:
+    - - name: cosmic-cow
+        template: moo-wisdom
+        withItems:
+        - "Galaxy"
+        - "Universe"
+        - "Cosmos"
+        - "Nebula"
+        - "Orbit"
+        - "Comet"
+        - "Star"
+        - "Planet"
+        - "Moon"
+        - "Solar"
+
+  - name: moo-wisdom
+    container:
+      image: rancher/cowsay
+      command: [sh, -c]
+      args: ["cowsay 'Greetings from the {{item}} System!' && sleep 8"]
