@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: multi-step-template-ref-
+  namespace: argo
+spec:
+  entrypoint: main-steps
+  arguments:
+    parameters:
+    - name: message
+      value: "Hello from a referenced template!"
+
+  templates:
+  - name: main-steps
+    steps:
+    - - name: step1-native
+        template: native-cowsay
+        arguments:
+          parameters:
+          - name: message
+            value: "This is from native template"
+    - - name: step2-referenced
+        templateRef:
+          name: cowsay-template
+          template: cowsay
+        arguments:
+          parameters:
+          - name: message
+            value: "{{workflow.parameters.message}}"
+
+  - name: native-cowsay
+    inputs:
+      parameters:
+      - name: message
+    container:
+      image: rancher/cowsay
+      command: [cowsay]
+      args: ["{{inputs.parameters.message}}"]
